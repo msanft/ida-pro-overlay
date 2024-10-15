@@ -18,7 +18,7 @@ This will then give you the store path, which is later used to instantiate the p
 
 ### With Flakes
 
-In your flake's inputs, import the overlay:
+In your flake's inputs, import the overlay
 
 ```nix
 ida-pro-overlay = {
@@ -27,7 +27,7 @@ ida-pro-overlay = {
 };
 ```
 
-Then, apply it to your `nixpkgs` instance with [`nixpkgs.overlays`]()
+Then, apply it to your `nixpkgs` instance with [`nixpkgs.overlays`](https://search.nixos.org/options?show=nixpkgs.overlays)
 
 ```nix
 nixpkgs.overlays = [
@@ -35,7 +35,7 @@ nixpkgs.overlays = [
 ];
 ```
 
-Then, you can instantiate the package, supplying it with your locally available installer:
+Then, you can instantiate the package, supplying it with your locally available installer
 
 ```nix
 environment.systemPackages = [
