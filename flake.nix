@@ -11,7 +11,7 @@
     }:
     {
       overlays.default = self: super: {
-        ida-pro = self.packages.x86_64-linux.ida-pro;
+        ida-pro = import ./packages/ida-pro.nix;
       };
     };
 }
