@@ -9,7 +9,7 @@ let
 in
 pkgs.stdenv.mkDerivation rec {
   pname = "ida-pro";
-  version = "9.0.0.241217";
+  version = "9.1.0.250226";
 
   src = runfile;
 
