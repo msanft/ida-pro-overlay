@@ -5,7 +5,7 @@
   ...
 }:
 let
-  pythonForIDA = pkgs.python3.withPackages (ps: with ps; [ rpyc ]);
+  pythonForIDA = pkgs.python313.withPackages (ps: with ps; [ rpyc ]);
 in
 pkgs.stdenv.mkDerivation rec {
   pname = "ida-pro";
@@ -105,7 +105,7 @@ pkgs.stdenv.mkDerivation rec {
     done
 
     # Manually patch libraries that dlopen stuff.
-    patchelf --add-needed libpython3.12.so $out/lib/libida.so
+    patchelf --add-needed libpython3.13.so $out/lib/libida.so
     patchelf --add-needed libcrypto.so $out/lib/libida.so
 
     # Some libraries come with the installer.
