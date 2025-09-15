@@ -9,7 +9,7 @@ let
 in
 pkgs.stdenv.mkDerivation rec {
   pname = "ida-pro";
-  version = "9.1.0.250226";
+  version = "9.2.0.250908";
 
   src = runfile;
 
@@ -29,7 +29,7 @@ pkgs.stdenv.mkDerivation rec {
     makeWrapper
     copyDesktopItems
     autoPatchelfHook
-    libsForQt5.wrapQtAppsHook
+    qt6.wrapQtAppsHook
   ];
 
   # We just get a runfile in $src, so no need to unpack it.
@@ -47,7 +47,8 @@ pkgs.stdenv.mkDerivation rec {
     libGL
     libkrb5
     libsecret
-    libsForQt5.qtbase
+    qt6.qtbase
+    qt6.qtwayland
     libunwind
     libxkbcommon
     libsecret
@@ -100,7 +101,7 @@ pkgs.stdenv.mkDerivation rec {
       --mode unattended --debuglevel 4 --prefix $IDADIR
 
     # Link the exported libraries to the output.
-    for lib in $IDADIR/libida*; do
+    for lib in $IDADIR/*.so $IDADIR/*.so.6; do
       ln -s $lib $out/lib/$(basename $lib)
     done
 
@@ -113,11 +114,13 @@ pkgs.stdenv.mkDerivation rec {
 
     # Link the binaries to the output.
     # Also, hack the PATH so that pythonForIDA is used over the system python.
-    for bb in ida assistant; do
+    for bb in ida; do
       wrapProgram $IDADIR/$bb \
+        --prefix IDADIR : $IDADIR \
         --prefix QT_PLUGIN_PATH : $IDADIR/plugins/platforms \
-        --prefix PYTHONPATH : $out/opt/idalib/python \
-        --prefix PATH : ${pythonForIDA}/bin
+        --prefix PYTHONPATH : $out/bin/idalib/python \
+        --prefix PATH : ${pythonForIDA}/bin:$IDADIR \
+        --prefix LD_LIBRARY_PATH : $out/lib
       ln -s $IDADIR/$bb $out/bin/$bb
     done
 
