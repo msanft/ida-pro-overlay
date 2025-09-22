@@ -108,6 +108,7 @@ pkgs.stdenv.mkDerivation rec {
     # Manually patch libraries that dlopen stuff.
     patchelf --add-needed libpython3.13.so $out/lib/libida.so
     patchelf --add-needed libcrypto.so $out/lib/libida.so
+    patchelf --add-needed libsecret-1.so.0 $out/lib/libida.so
 
     # Some libraries come with the installer.
     addAutoPatchelfSearchPath $IDADIR
