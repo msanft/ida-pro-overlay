@@ -1,20 +1,18 @@
 # Nix Flake for IDA Pro
 
-You can use the overlay provided by this flake along with your own IDA installer runfile to build your IDA Pro with Nix and use it on NixOS.
+You can use the overlay provided by this flake along with your own IDA installer runfile to build an IDA Pro package with Nix and use it on NixOS.
 
 ## How to Use
 
-First, whether flakes are used or not, the IDA Pro installer must be made available for Nix.
+First, the IDA Pro installer must be made available for Nix.
 
-This can be done by checking it into a private Git repository, supplying the build the path to the package, fetching the installer via the network, etc.
-
-For example, the installer can be added to the store like so:
+Add the installer to the store like so:
 
 ```sh
-nix store add-file ida-pro_90_x64linux.run
+nix store add-file ida-pro_92_x64linux.run
 ```
 
-This will then give you the store path, which is later used to instantiate the package.
+It will then be picked up automatically as a dependency.
 
 ### With Flakes
 
@@ -35,14 +33,11 @@ nixpkgs.overlays = [
 ];
 ```
 
-Then, you can instantiate the package, supplying it with your locally available installer
+Then, you can instantiate the package.
 
 ```nix
 environment.systemPackages = [
-    (callPackage ida-pro {
-        # Alternatively, fetch the installer through `fetchurl`, use a local path, etc.
-        runfile = /nix/store/z83flk6c9fm9li3gs13vbamq2szg9rwf-ida-pro_90_x64linux.run;
-    })
+    ida-pro
 ];
 ```
 
