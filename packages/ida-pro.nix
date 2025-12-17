@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  extraFiles ? "",
   ...
 }:
 let
@@ -127,6 +128,10 @@ pkgs.stdenv.mkDerivation rec {
         --prefix LD_LIBRARY_PATH : $out/lib
       ln -s $IDADIR/$bb $out/bin/$bb
     done
+
+    if [ -n "${extraFiles}" ]
+      then cp -r "${extraFiles}"/* $out/opt/
+    fi
 
     runHook postInstall
   '';
