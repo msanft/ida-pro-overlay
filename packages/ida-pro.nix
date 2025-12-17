@@ -1,7 +1,6 @@
 {
   pkgs,
   lib,
-  runfile,
   ...
 }:
 let
@@ -11,7 +10,11 @@ pkgs.stdenv.mkDerivation rec {
   pname = "ida-pro";
   version = "9.2.0.250908";
 
-  src = runfile;
+  src = pkgs.requireFile {
+    name = "ida-pro_92_x64linux.run";
+    url = "https://my.hex-rays.com/";
+    sha256 = "aadd0f8ae972b84f94f2a974834abf1619f3bd933b3b4d8275f9c50008d05ae1";
+  };
 
   desktopItem = pkgs.makeDesktopItem {
     name = "ida-pro";

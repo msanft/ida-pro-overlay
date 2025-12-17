@@ -11,7 +11,8 @@
     }:
     {
       overlays.default = self: super: {
-        ida-pro = import ./packages/ida-pro.nix;
+        # use super here to inherit allowUnfree status
+        ida-pro = super.callPackage ./packages/ida-pro.nix {};
       };
     };
 }
