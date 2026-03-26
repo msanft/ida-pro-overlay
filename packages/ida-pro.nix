@@ -3,6 +3,11 @@
   lib,
   extraFiles ? "",
   hexPatches ? [],
+  # hexPatches: hex patterns to substitute in specified files immediately after
+  # install. Can be used, for example, to replace the embedded SSL certificates
+  # for compatibility with a self-hosted Lumina server.
+  # Since IDA Pro is distributed as a binary, such patching is the only recourse
+  # available to us for interoperability purposes.
   ...
 }:
 let
