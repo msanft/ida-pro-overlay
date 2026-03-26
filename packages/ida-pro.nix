@@ -2,10 +2,20 @@
   pkgs,
   lib,
   extraFiles ? "",
+  hexPatches ? [],
   ...
 }:
 let
   pythonForIDA = pkgs.python313.withPackages (ps: with ps; [ rpyc ]);
+  patchScript = lib.concatMapStringsSep "\n" (p:
+    let
+      forcecntDecl =
+        lib.optionalString (p ? assertCount)
+          "my $forcecnt = ${toString p.assertCount};";
+          in ''
+      perl -0777 -pi -e '${forcecntDecl} my $cnt = (s/\Q''${\pack("H*","${p.from}")}\E/''${\pack("H*","${p.to}")}/g) || 0; die "Expected $forcecnt substitutions, did $cnt\n" if defined $forcecnt && $cnt != $forcecnt' "$IDADIR/${p.filename}"
+    ''
+  ) hexPatches;
 in
 pkgs.stdenv.mkDerivation rec {
   pname = "ida-pro";
@@ -34,6 +44,7 @@ pkgs.stdenv.mkDerivation rec {
     copyDesktopItems
     autoPatchelfHook
     qt6.wrapQtAppsHook
+    perl
   ];
 
   # We just get a runfile in $src, so no need to unpack it.
@@ -103,6 +114,8 @@ pkgs.stdenv.mkDerivation rec {
     # to copy it to fix permissions and patch the executable.
     $(cat $NIX_CC/nix-support/dynamic-linker) $src \
       --mode unattended --debuglevel 4 --prefix $IDADIR
+
+    ${patchScript}
 
     # Link the exported libraries to the output.
     for lib in $IDADIR/*.so $IDADIR/*.so.6; do
