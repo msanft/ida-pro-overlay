@@ -122,18 +122,14 @@ pkgs.stdenv.mkDerivation rec {
 
     ${patchScript}
 
-    # Link the exported libraries to the output.
-    for lib in $IDADIR/*.so $IDADIR/*.so.6; do
-      ln -s $lib $out/lib/$(basename $lib)
-    done
+    # Some libraries come with the installer.
+    addAutoPatchelfSearchPath $IDADIR
 
-    # Manually patch libraries that dlopen stuff.
+    # Keep bundled libraries private to IDA to avoid collisions in buildEnv.
+    cp $IDADIR/libida.so $out/lib/
     patchelf --add-needed libpython3.13.so $out/lib/libida.so
     patchelf --add-needed libcrypto.so $out/lib/libida.so
     patchelf --add-needed libsecret-1.so.0 $out/lib/libida.so
-
-    # Some libraries come with the installer.
-    addAutoPatchelfSearchPath $IDADIR
 
     # Link the binaries to the output.
     # Also, hack the PATH so that pythonForIDA is used over the system python.
@@ -143,7 +139,7 @@ pkgs.stdenv.mkDerivation rec {
         --prefix QT_PLUGIN_PATH : $IDADIR/plugins/platforms \
         --prefix PYTHONPATH : $out/bin/idalib/python \
         --prefix PATH : ${pythonForIDA}/bin:$IDADIR \
-        --prefix LD_LIBRARY_PATH : $out/lib
+        --prefix LD_LIBRARY_PATH : $IDADIR
       ln -s $IDADIR/$bb $out/bin/$bb
     done
 
